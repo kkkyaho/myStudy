@@ -26,6 +26,17 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-logging'
+
+    implementation group: 'org.apache.lucene', name: 'lucene-analyzers-common', version: '8.9.0'
+    implementation group: 'org.apache.lucene', name: 'lucene-core', version: '8.9.0'
+    implementation 'org.jsoup:jsoup:1.17.2'
+
+//    implementation 'ch.qos.logback:logback-classic:1.5.3'
+//    implementation 'org.slf4j:slf4j-api:2.0.12'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
 }
 
 tasks.named('test') {
