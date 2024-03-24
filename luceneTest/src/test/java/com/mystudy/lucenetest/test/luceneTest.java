@@ -108,14 +108,16 @@ public class luceneTest {
 
             Elements elements = doc.select(".article_wrapper .title_wrapper");
             for (Element element : elements) {
-//                System.out.println(element.getElementsByAttributeValueNot("aa", "span"));
-//                System.out.println(element.text());
-                System.out.println(element.attr("href"));
-                System.out.println(element.html().replaceAll("\\<span.*\\)</span>",""));
-//                Elements remove = element.select("span");
-//                System.out.println(remove);
+                String contentUrl = element.attr("href");
+                String title = element.html().replaceAll("\\<span.*\\)</span>","");
+                org.jsoup.nodes.Document subDoc = Jsoup.connect(contentUrl).get();
 
-            }
+                Elements subElements = subDoc.select(".view_content p");
+                for (Element subElemenet : subElements) {
+                    System.out.println(subElemenet);
+                    System.out.println(subElemenet.text());
+                }
+           }
         }
     }
 

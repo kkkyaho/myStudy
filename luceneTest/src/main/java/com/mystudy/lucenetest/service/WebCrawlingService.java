@@ -33,7 +33,17 @@ public class WebCrawlingService {
             for (Element element : elements) {
                 String title = element.html().replaceAll(regExp, "");
                 String hrefUrl = element.attr("href").toString();
-                WebContentDto webContentDto = new WebContentDto(hrefUrl, title);
+
+                Elements subElements = Jsoup.connect(hrefUrl).get().select(cssQuery);
+
+                String htmlCode = subElements.toString();
+                String content = "";
+                for (Element subElement : subElements) {
+                    if (!subElement.toString().isEmpty()) {
+                        content += subElement.text();
+                    }
+                }
+                WebContentDto webContentDto = new WebContentDto(hrefUrl, title, htmlCode, content);
                 list.add(webContentDto);
             }
 
