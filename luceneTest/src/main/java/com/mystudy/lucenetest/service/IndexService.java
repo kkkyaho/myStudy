@@ -4,10 +4,7 @@ import com.mystudy.lucenetest.dto.WebContentDto;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.LongPoint;
-import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.*;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
@@ -17,6 +14,10 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Slf4j
@@ -42,12 +43,18 @@ public class IndexService {
 
         for (WebContentDto dto : list) {
 
-            log.info(dto.toString());
-
             Term term = new Term("title", dto.getTitle());
             Document document = new Document();
-            document.add(new StringField("title"   , dto.getTitle(), Field.Store.YES));
-            document.add(new StringField("url"  , dto.getUrl(), Field.Store.YES));
+
+            LocalDateTime localDateTime = LocalDateTime.now();
+
+            document.add(new LongPoint("date", ZonedDateTime.of(localDateTime, ZoneId.systemDefault()).toInstant().toEpochMilli()));
+            document.add(new StoredField("date", ZonedDateTime.of(localDateTime, ZoneId.systemDefault()).toInstant().toEpochMilli()));
+            document.add(new StringField("dateField", localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), Field.Store.YES));
+            document.add(new StringField("title", dto.getTitle(), Field.Store.YES));
+            document.add(new StringField("url", dto.getUrl(), Field.Store.YES));
+            document.add(new StringField("html", dto.getHtmlCode(), Field.Store.YES));
+            document.add(new StringField("content", dto.getContent(), Field.Store.YES));
             try {
                 indexWriter.updateDocument(term, document);
                 indexWriter.commit();
@@ -57,5 +64,9 @@ public class IndexService {
             }
 
         }
+    }
+
+    public String getIndexDir() {
+        return this.dirPath;
     }
 }

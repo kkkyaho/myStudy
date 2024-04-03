@@ -15,9 +15,6 @@ public class WebContentDto {
     private String content;
     private LocalDateTime date;
 
-
-
-
     public WebContentDto() {
     }
 

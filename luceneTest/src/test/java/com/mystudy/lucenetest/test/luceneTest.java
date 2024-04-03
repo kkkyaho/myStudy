@@ -1,6 +1,7 @@
 package com.mystudy.lucenetest.test;
 
 import com.mystudy.lucenetest.dto.Person;
+import com.mystudy.lucenetest.utils.QueryUtil;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -16,6 +17,7 @@ import org.jsoup.select.Elements;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -56,21 +58,24 @@ public class luceneTest {
         Directory directory = FSDirectory.open(indexDirectory.toPath());
         IndexReader indexReader = DirectoryReader.open(directory);
         IndexSearcher indexSearcher = new IndexSearcher(indexReader);
-
-
         Query query1 = new WildcardQuery(new Term("url", "https*"));
+        Query rangeQuery = LongPoint.newRangeQuery("date", QueryUtil.makeTimeStamp(LocalDateTime.now().minusDays(1)), QueryUtil.makeTimeStamp(LocalDateTime.now()));
+
 
         BooleanQuery booleanQuery = new BooleanQuery.Builder()
-                .add(query1, BooleanClause.Occur.MUST)
+                .add(rangeQuery, BooleanClause.Occur.MUST)
                 .build();
 
         TopDocs hits = indexSearcher.search(booleanQuery, 1000);
-        System.out.println("count : " + hits.totalHits.value);
 
         for (ScoreDoc scoreDoc : hits.scoreDocs) {
             Document doc = indexSearcher.doc(scoreDoc.doc);
-            System.out.println(doc.get("title"));
-            System.out.println(doc.get("url"));
+
+            List<IndexableField> list = doc.getFields();
+            for (IndexableField field : list) {
+                System.out.println(field.name()  + "   ::   " + field.stringValue());
+            }
+
         }
 
     }

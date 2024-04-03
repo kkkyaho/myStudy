@@ -17,12 +17,10 @@ public class WebCrawlingSchedule {
     @Scheduled(fixedRate = 60000)
     public void runSchedule() {
 
-        for (int i=1; i<11; i++) {
+        for (int i=1; i<2; i++) {
             String url = "https://bbs.ruliweb.com/best/all/now?orderby=best_id&range=24h&m=all&t=now&";
             String param = "page=" + i;
             String cssQuery = ".article_wrapper .title_wrapper";
-
-            log.info("param   ::   " + url+param);
 
             webCrawlingService.webCrawlingByJsoup(url+param, cssQuery);
         }
